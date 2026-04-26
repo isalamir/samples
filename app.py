@@ -1,3 +1,4 @@
+
 import json
 import streamlit as st
 import codecs
@@ -37,13 +38,13 @@ def clean_noise(text):
     
     # Handle chat-UI code artifacts: Language\nCopy\n1\n2\n3...
     # These often have line numbers interleaved or at the start.
-    artifact_header = r'(?:\n|^)(?:python|plaintext|bash|sh|javascript|yaml|json|sql|html|css|cpp|c|rust|go)\s*Copy\s*'
+    artifact_header = r'\n(?:python|plaintext|bash|sh|javascript|yaml|json|sql|html|css|cpp|c|rust|go)\s*\nCopy\s*\n'
     if re.search(artifact_header, text, re.IGNORECASE):
         # 1. Replace the header with a markdown code block start
-        text = re.sub(r'(?:\n|^)(python|plaintext|bash|sh|javascript|yaml|json|sql|html|css|cpp|c|rust|go)\s*Copy\s*', r'\n```\1\n', text, flags=re.IGNORECASE)
+        text = re.sub(r'\n(python|plaintext|bash|sh|javascript|yaml|json|sql|html|css|cpp|c|rust|go)\s*\nCopy\s*\n', r'\n```\1\n', text, flags=re.IGNORECASE)
         
         # 2. Strip lone line numbers (e.g., a line that is just "1", "2", etc.)
-        text = re.sub(r'^\s*[\d\s]+\s*$\n?', '', text, flags=re.MULTILINE)
+        text = re.sub(r'^\s*\d+\s*$\n?', '', text, flags=re.MULTILINE)
         
         # 3. Heal fragmented code: Join lines if they are very short or look like part of an expression
         def heal_lines(content):
@@ -781,3 +782,4 @@ for i, tab in enumerate(tabs):
 
             st.markdown("---")
             st.markdown("<br>", unsafe_allow_html=True)
+
